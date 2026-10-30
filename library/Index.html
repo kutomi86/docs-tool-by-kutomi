@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- Google Fonts import -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Caveat:wght@600&display=swap');
+
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #edeff1;
+        --bg-card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --primary: #0d9488;
+        --primary-hover: #0f766e;
+        --accent: #7c3aed;
+        --accent-hover: #6d28d9;
+        --border-color: #e2e8f0;
+        --error-bg: #fef2f2;
+        --error-border: #f87171;
+        --error-text: #dc2626;
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 8px;
+      }
+
+      body.dark-mode {
+        --bg-primary: #111827;
+        --bg-secondary: #2d3850;
+        --bg-card: #1f2937;
+        --text-main: #f9fafb;
+        --text-muted: #9ca3af;
+        --border-color: #374151;
+        --error-bg: #2c0b0e;
+        --error-border: #ef4444;
+        --error-text: #fca5a5;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+      }
+
+      html, body {
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-main);
+        padding: 12px;
+        font-size: 0.9rem;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Fixed Top Section */
+      .top-section {
+        flex-shrink: 0;
+      }
+
+      .header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2px;
+      }
+
+      .header-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .theme-toggle-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        font-size: 1rem;
+        padding: 4px 8px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+
+      /* Handwritten Dev Message (Updated size to 1.2rem) */
+      .dev-message {
+        text-align: center;
+        font-family: 'Dancing Script', 'Caveat', 'Brush Script MT', cursive;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-top: 2px;
+        margin-bottom: 6px;
+        line-height: 1.2;
+        white-space: pre-line;
+      }
+
+      .description-text {
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        text-align: center;
+        margin-bottom: 12px;
+        line-height: 1.35;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 10px 14px;
+        border: none;
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-primary { background-color: var(--primary); color: #ffffff; }
+      .btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); }
+      .btn-accent { background-color: var(--accent); color: #ffffff; }
+      .btn-accent:hover:not(:disabled) { background-color: var(--accent-hover); }
+      .btn-danger { background-color: #dc2626; color: #ffffff; }
+      .btn-danger:hover:not(:disabled) { background-color: #b91c1c; }
+      .btn-green { background-color: #16a34a; color: #ffffff; }
+      .btn-green:hover:not(:disabled) { background-color: #15803d; }
+
+      .button-group-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .alert-notice {
+        background-color: var(--error-bg);
+        border: 2px dashed var(--error-border);
+        color: var(--error-text);
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        line-height: 1.35;
+      }
+
+      .alert-emoji {
+        font-size: 1.4rem;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .loader-container {
+        text-align: center;
+        margin: 10px 0;
+      }
+
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border: 4px solid var(--border-color);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 8px auto;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .ascii-progress {
+        font-family: monospace;
+        font-size: 0.8rem;
+        color: var(--primary);
+        white-space: pre;
+      }
+
+      .table-scroll-wrapper {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        margin-top: 6px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+      }
+
+      td {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        color: var(--text-main);
+      }
+
+      tr {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      tr:last-child {
+        border-bottom: none;
+      }
+
+      tr:hover {
+        background-color: var(--bg-secondary);
+      }
+
+      tr.unresolved-row {
+        background-color: var(--error-bg);
+      }
+
+      tr.unresolved-row td {
+        color: var(--error-text);
+      }
+
+      tr.raw-comment-row td.col-citation {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      /* Action Column & Dual-Emoji Popover Bubble */
+      .col-eye {
+        width: 28px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+      }
+
+      .col-eye .tooltip-text {
+        visibility: hidden;
+        background-color: #000000;
+        color: #ffffff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        position: absolute;
+        z-index: 99;
+        top: 50%;
+        left: 105%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+        white-space: nowrap;
+        pointer-events: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .col-eye .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 100%;
+        margin-top: -4px;
+        border-width: 4px;
+        border-style: solid;
+        border-color: transparent #000000 transparent transparent;
+      }
+
+      .col-eye:hover .tooltip-text,
+      .col-eye .tooltip-text:hover {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      /* Updated padding to 0px 4px */
+      .tooltip-btn {
+        cursor: pointer;
+        padding: 0px 4px;
+        border-radius: 3px;
+        transition: background-color 0.15s ease;
+      }
+
+      .tooltip-btn:hover {
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+
+      .tooltip-divider {
+        width: 1px;
+        height: 12px;
+        background-color: rgba(255, 255, 255, 0.4);
+        display: inline-block;
+      }
+
+      .col-index {
+        font-weight: 600;
+        color: var(--accent);
+        padding-right: 6px;
+      }
+
+      .col-citation {
+        width: 100%;
+      }
+
+      td[contenteditable="true"]:focus {
+        outline: 1px solid var(--primary);
+        background-color: var(--bg-card);
+        border-radius: 4px;
+      }
+
+      .version-footer {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        margin-top: auto;
+        padding-top: 8px;
+        padding-bottom: 2px;
+        flex-shrink: 0;
+      }
+
+      .version-footer::before,
+      .version-footer::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .version-footer span {
+        padding: 0 10px;
+        font-weight: 500;
+      }
+
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        padding: 18px;
+        width: 85%;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+
+    <!-- Fixed Top Section -->
+    <div class="top-section">
+      <div class="header-flex">
+        <span class="header-title">Citation Extractor</span>
+        <button id="themeBtn" class="theme-toggle-btn">🌙</button>
+      </div>
+
+      <!-- Dev Message -->
+      <p id="devMessage" class="dev-message"><?= dev.message ?></p>
+
+      <p id="descText" class="description-text">
+        Extracts URLs and DOIs from document comments, formats them into APA 7, and generates an indexed list.
+      </p>
+
+      <button id="mainBtn" class="btn btn-primary">Find Citation</button>
+
+      <div id="completionActions" class="button-group-3 hidden">
+        <button id="redoBtn" class="btn btn-accent">Redo</button>
+        <button id="copyBtn" class="btn btn-primary">Copy</button>
+        <button id="clearBtn" class="btn btn-danger">Clear</button>
+      </div>
+
+      <!-- Warning Box -->
+      <div id="noticeBox" class="alert-notice hidden">
+        <span>Indexes may not match actual source numbers. Make sure to double check.</span>
+        <span class="alert-emoji">🚨</span>
+      </div>
+
+      <!-- Loader -->
+      <div id="loaderArea" class="loader-container hidden">
+        <div class="spinner"></div>
+        <div id="asciiBar" class="ascii-progress">[░░░░░░░░░░] 0%</div>
+      </div>
+
+      <!-- End Status -->
+      <p id="statusText" class="description-text hidden" style="margin-top: 6px; font-weight: 600;">
+        All sources gathered.
+      </p>
+    </div>
+
+    <!-- Scrollable Table Area -->
+    <div id="tableWrapper" class="table-scroll-wrapper hidden">
+      <table id="citationTable">
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- New Row Button Container -->
+    <div id="newRowBtnWrapper" class="hidden" style="margin-top: 10px; margin-bottom: 6px; flex-shrink: 0;">
+      <button id="addBtn" class="btn btn-green">➕ New Row</button>
+    </div>
+
+    <!-- Continuous Line Version Footer -->
+    <div class="version-footer">
+      <span><?= dev.version ?></span>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="clearModal" class="modal-overlay">
+      <div class="modal-card">
+        <p id="modalMessageText" style="font-size:0.9rem; font-weight:600;">Are you sure?</p>
+        <div class="modal-actions">
+          <button id="modalYesBtn" class="btn btn-danger">Yes</button>
+          <button id="modalCancelBtn" class="btn btn-primary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var STATE = {
+        comments: [],
+        processedCount: 0,
+        isProcessing: false,
+        isAborted: false
+      };
+
+      var pendingModalAction = null;
+
+      function initListeners() {
+        document.getElementById('themeBtn').onclick = toggleTheme;
+        document.getElementById('mainBtn').onclick = handleMainButtonClick;
+        document.getElementById('redoBtn').onclick = startProcess;
+        document.getElementById('copyBtn').onclick = copyCitations;
+        document.getElementById('clearBtn').onclick = openClearModal;
+        document.getElementById('addBtn').onclick = addNewRow;
+        document.getElementById('modalYesBtn').onclick = confirmModalAction;
+        document.getElementById('modalCancelBtn').onclick = closeModal;
+      }
+
+      function toggleTheme() {
+        var body = document.body;
+        var btn = document.getElementById('themeBtn');
+        body.classList.toggle('dark-mode');
+        btn.innerText = body.classList.contains('dark-mode') ? '🌞' : '🌙';
+      }
+
+      function handleMainButtonClick() {
+        if (STATE.isProcessing) {
+          stopProcess();
+        } else {
+          startProcess();
+        }
+      }
+
+      function startProcess() {
+        STATE.isProcessing = true;
+        STATE.isAborted = false;
+        STATE.comments = [];
+        STATE.processedCount = 0;
+
+        document.getElementById('addBtn').disabled = true;
+
+        document.getElementById('descText').classList.add('hidden');
+        document.getElementById('statusText').classList.add('hidden');
+        document.getElementById('completionActions').classList.add('hidden');
+        
+        document.getElementById('noticeBox').classList.remove('hidden');
+        document.getElementById('loaderArea').classList.remove('hidden');
+        document.getElementById('tableWrapper').classList.remove('hidden');
+        document.getElementById('newRowBtnWrapper').classList.remove('hidden');
+
+        var mainBtn = document.getElementById('mainBtn');
+        mainBtn.innerText = "Stop Process";
+        mainBtn.className = "btn btn-danger";
+        mainBtn.classList.remove('hidden');
+
+        document.getElementById('tableBody').innerHTML = "";
+        updateProgress(0, 1);
+
+        google.script.run
+          .withSuccessHandler(beginBatchProcessing)
+          .withFailureHandler(handleError)
+          .getDocumentComments();
+      }
+
+      function stopProcess() {
+        STATE.isAborted = true;
+        finishProcess();
+      }
+
+      function beginBatchProcessing(comments) {
+        STATE.comments = comments || [];
+        var total = STATE.comments.length;
+
+        if (total === 0) {
+          updateProgress(1, 1);
+          finishProcess();
+          alert("No comments found in this document.");
+          return;
+        }
+
+        processChunk(0, 5, total);
+      }
+
+      function processChunk(startIndex, batchSize, total) {
+        if (STATE.isAborted || startIndex >= total) {
+          finishProcess();
+          return;
+        }
+
+        var chunk = STATE.comments.slice(startIndex, startIndex + batchSize);
+        var chunkTexts = chunk.map(function(c) { return c.content; });
+
+        google.script.run
+          .withSuccessHandler(function(citations) {
+            if (STATE.isAborted) return;
+
+            citations.forEach(function(item, idx) {
+              var globalIndex = startIndex + idx + 1;
+              appendTableRow(globalIndex, item);
+            });
+
+            STATE.processedCount = Math.min(startIndex + chunk.length, total);
+            updateProgress(STATE.processedCount, total);
+
+            processChunk(startIndex + batchSize, batchSize, total);
+          })
+          .withFailureHandler(handleError)
+          .processCommentBatch(chunkTexts);
+      }
+
+      function appendTableRow(index, resultObj) {
+        var tbody = document.getElementById('tableBody');
+        var tr = document.createElement('tr');
+
+        var textVal = typeof resultObj === 'string' ? resultObj : (resultObj.text || '');
+        var typeVal = typeof resultObj === 'object' ? resultObj.type : 'raw';
+
+        if (typeVal === 'unresolved') {
+          tr.className = 'unresolved-row';
+        } else if (typeVal === 'raw') {
+          tr.className = 'raw-comment-row';
+        }
+
+        var tdEye = document.createElement('td');
+        tdEye.className = 'col-eye';
+        
+        var baseIcon = document.createElement('span');
+        baseIcon.textContent = '🔍';
+
+        var tooltipDiv = document.createElement('div');
+        tooltipDiv.className = 'tooltip-text';
+
+        var jumpSpan = document.createElement('span');
+        jumpSpan.className = 'tooltip-btn';
+        jumpSpan.textContent = '👁‍🗨';
+        jumpSpan.title = 'Go to origin';
+        jumpSpan.onclick = function(e) {
+          e.stopPropagation();
+          handleJump(index - 1);
+        };
+
+        var dividerSpan = document.createElement('span');
+        dividerSpan.className = 'tooltip-divider';
+
+        var trashSpan = document.createElement('span');
+        trashSpan.className = 'tooltip-btn';
+        trashSpan.textContent = '🗑️';
+        trashSpan.title = 'Delete row';
+        trashSpan.onclick = function(e) {
+          e.stopPropagation();
+          promptDeleteRow(tr);
+        };
+
+        tooltipDiv.appendChild(jumpSpan);
+        tooltipDiv.appendChild(dividerSpan);
+        tooltipDiv.appendChild(trashSpan);
+
+        tdEye.appendChild(baseIcon);
+        tdEye.appendChild(tooltipDiv);
+
+        var tdIndex = document.createElement('td');
+        tdIndex.className = 'col-index';
+        tdIndex.contentEditable = 'true';
+        tdIndex.textContent = '[' + index + ']';
+
+        var tdCitation = document.createElement('td');
+        tdCitation.className = 'col-citation';
+        tdCitation.contentEditable = 'true';
+        tdCitation.textContent = textVal;
+
+        tr.appendChild(tdEye);
+        tr.appendChild(tdIndex);
+        tr.appendChild(tdCitation);
+        tbody.appendChild(tr);
+      }
+
+      function addNewRow() {
+        if (STATE.isProcessing) return;
+        var tbody = document.getElementById('tableBody');
+        var rowCount = tbody.querySelectorAll('tr').length;
+        var newIndex = rowCount + 1;
+
+        appendTableRow(newIndex, { text: '', type: 'raw' });
+
+        document.getElementById('tableWrapper').classList.remove('hidden');
+        document.getElementById('newRowBtnWrapper').classList.remove('hidden');
+
+        var wrapper = document.getElementById('tableWrapper');
+        wrapper.scrollTop = wrapper.scrollHeight;
+      }
+
+      function handleJump(commentIndex) {
+        var commentObj = STATE.comments[commentIndex];
+        if (!commentObj || !commentObj.quotedText) {
+          alert("No anchor text associated with this comment.");
+          return;
+        }
+        google.script.run.jumpToCommentText(commentObj.quotedText, commentObj.occurrenceIndex);
+      }
+
+      function updateProgress(current, total) {
+        var percentage = Math.round((current / total) * 100);
+        var totalBlocks = 10;
+        var filledBlocks = Math.round((percentage / 100) * totalBlocks);
+        var emptyBlocks = totalBlocks - filledBlocks;
+
+        var bar = '█'.repeat(filledBlocks) + '░'.repeat(emptyBlocks);
+        document.getElementById('asciiBar').innerText = '[' + bar + '] ' + percentage + '%';
+      }
+
+      function finishProcess() {
+        STATE.isProcessing = false;
+        document.getElementById('addBtn').disabled = false;
+        document.getElementById('loaderArea').classList.add('hidden');
+        document.getElementById('mainBtn').classList.add('hidden');
+        document.getElementById('completionActions').classList.remove('hidden');
+
+        if (!STATE.isAborted && STATE.comments.length > 0) {
+          document.getElementById('statusText').classList.remove('hidden');
+        }
+      }
+
+      function copyCitations() {
+        var rows = document.querySelectorAll('#tableBody tr');
+        var outputLines = [];
+
+        rows.forEach(function(tr) {
+          var index = tr.querySelector('.col-index').textContent.trim();
+          var citation = tr.querySelector('.col-citation').textContent.trim();
+          outputLines.push(index + ' ' + citation);
+        });
+
+        var fullText = outputLines.join('\n');
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(fullText)
+            .then(function() { alert("Citations copied to clipboard!"); })
+            .catch(function() { fallbackCopy(fullText); });
+        } else {
+          fallbackCopy(fullText);
+        }
+      }
+
+      function fallbackCopy(text) {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          alert("Citations copied to clipboard!");
+        } catch (err) {
+          alert("Failed to copy automatically. Please select and copy text manually.");
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+
+      function openModalWithAction(messageText, actionFn) {
+        document.getElementById('modalMessageText').textContent = messageText;
+        pendingModalAction = actionFn;
+        document.getElementById('clearModal').style.display = 'flex';
+      }
+
+      function closeModal() {
+        document.getElementById('clearModal').style.display = 'none';
+        pendingModalAction = null;
+      }
+
+      function confirmModalAction() {
+        if (typeof pendingModalAction === 'function') {
+          pendingModalAction();
+        }
+        closeModal();
+      }
+
+      function openClearModal() {
+        openModalWithAction('Are you sure to clear the result?', confirmClear);
+      }
+
+      function promptDeleteRow(trElement) {
+        openModalWithAction('Are you sure you want to delete this row?', function() {
+          if (trElement && trElement.parentNode) {
+            trElement.parentNode.removeChild(trElement);
+          }
+        });
+      }
+
+      function confirmClear() {
+        STATE.comments = [];
+        STATE.processedCount = 0;
+        document.getElementById('addBtn').disabled = false;
+        document.getElementById('tableBody').innerHTML = "";
+        document.getElementById('tableWrapper').classList.add('hidden');
+        document.getElementById('statusText').classList.add('hidden');
+        document.getElementById('noticeBox').classList.add('hidden');
+        document.getElementById('newRowBtnWrapper').classList.add('hidden');
+        document.getElementById('completionActions').classList.add('hidden');
+        document.getElementById('descText').classList.remove('hidden');
+
+        var mainBtn = document.getElementById('mainBtn');
+        mainBtn.innerText = "Find Citation";
+        mainBtn.className = "btn btn-primary";
+        mainBtn.classList.remove('hidden');
+      }
+
+      function handleError(err) {
+        alert("Error: " + err.message);
+        finishProcess();
+      }
+
+      initListeners();
+    </script>
+  </body>
+</html>
